@@ -10,3 +10,4 @@
 + Remove the labels under players(Show Position button)
 + Update Read Me
 + Add more colors
++ Print to file and get players from file?

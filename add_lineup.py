@@ -1,9 +1,8 @@
-import os
 from tkinter import *
 
 
 class add_lineup:
-    def __init__(self, player_num):
+    def __init__(self, player_num, position_array):
         # The Creation of this class
 
         # Create the Main window for all the info
@@ -15,7 +14,7 @@ class add_lineup:
         self.player_button = [0 for x in range(20)]
         self.default_padx = 10
         self.player_labels = [0 for x in range(self.player_num + 1)]
-        self.position_array = ["Server", "Hitter", "Hitter", "Setter", "Setter", "Setter"]
+        self.position_array = position_array
         self.position_array_labels = [0 for x in range(6)]
 
         self.create_screen()

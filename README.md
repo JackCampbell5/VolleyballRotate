@@ -5,11 +5,12 @@
 + Tk
 
 ## To Do List:
-+ User input number of players
-  + Window size scales based on player number   
-+ Not have to click add button for each player
-+ Remove the labels under players(Show Position button)
-+ Update Read Me
++ Error print if user does not put in integer
++ Add a textbox for net with column width 3
++ Change position of rotate button to be at bottom
++ Add scrollbars
 + Add more colors
 + Print to file and get players from file?
 + Add documentation
++ Remove print statements
++ Update Read Me

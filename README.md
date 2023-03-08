@@ -6,7 +6,6 @@
 
 ## To Do List:
 + Error print if user does not put in integer
-+ Add a textbox for net with column width 3
 + Change position of rotate button to be at bottom
 + Add scrollbars
 + Add more colors
@@ -14,3 +13,4 @@
 + Add documentation
 + Remove print statements
 + Update Read Me
++ When buttons are clicks remove all objects and re do

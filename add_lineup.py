@@ -2,7 +2,7 @@ from tkinter import *
 
 
 class add_lineup:
-    def __init__(self, player_num, position_array):
+    def __init__(self):
         # The Creation of this class
 
         # Final values of the program
@@ -23,13 +23,20 @@ class add_lineup:
         self.num_info_row = 4
 
         # The arrays containing the players
+        self.first_input_output = False
         self.default_array = None
         self.player_array = None
         self.player_input = None
         self.player_button = None
         self.player_labels = None
         self.position_array_labels = None
+
+        # Output values
+        self.net_label = None
+        self.other_player_label = None
+        self.rotate_button = None
         self.output_value = None
+        self.first_output = True
 
         # Create the screen
         self.create_screen()
@@ -39,6 +46,10 @@ class add_lineup:
 
         # Creates the labels input
         self.player_labels_checkbox()
+
+        # TODO Remove- Just for testing
+        # self.create_player_inputs()
+        # self.output()
 
         # Runs the program
         self.run()
@@ -67,8 +78,7 @@ class add_lineup:
         self.player_number_change_entry[2] = Button(self.window, text="Start", font=('', 12),
                                                     command=lambda: self.create_player_inputs())
         self.player_number_change_entry[2].grid(row=2, column=2, padx=5, pady=(1, 10), sticky='W',
-                                                ipadx=self.default_padx,
-                                                ipady=5)
+                                                ipadx=self.default_padx, ipady=5, columnspan=3)
 
     def player_labels_checkbox(self):
         self.checkbox_output = IntVar()
@@ -87,25 +97,53 @@ class add_lineup:
 
     def create_player_inputs(self):
 
-        self.player_num = int(self.player_number_change_entry[1].get())
+        self.forget_output_buttons()
+        # If it is not the first time displaying all the inputs get rid of all the previos stuff
+        if self.first_input_output:
+            # Removes the player_input labels
+            for c in range(len(self.player_button)):
+                self.player_button[c].grid_forget()
+            # Removes the player inputs themselves
+            for d in range(len(self.player_input)):
+                self.player_input[d].grid_forget()
+
+        # Try setting to integer value inputted if not just set it to 6
+        try:
+            self.player_num = int(self.player_number_change_entry[1].get())
+        except ValueError:
+            self.player_num = 6
+            # TODO print out error if this occurs
+
         if self.player_num < 6: self.player_num = 6
+        # The default array of values [1-Playernum]
         self.default_array = [x + 1 for x in range(self.player_num)]
+        # The Array of player names
         self.player_array = self.default_array.copy()
+        # The input feilds for each of the player names
         self.player_input = [0 for x in range(self.player_num)]
-        self.player_button = [0 for x in range(self.player_num + 2)]
-        self.player_labels = [0 for x in range(self.player_num + 1)]
+        # The labels for each of the name inputs
+        self.player_button = [0 for x in range(self.player_num + 1)]
+
+        # Output Arrays
+        # The output labels for each of the player
+        self.player_labels = [0 for x in range(self.player_num)]
+        # The position labels for each of the players
         self.position_array_labels = [0 for x in range(6)]
+
+        # Reset output
+        self.first_output = True
 
         # Add all the inputs and the add button
         for a in range(self.player_num):
             self.add_player_creation(a)
         # Selection button 0
-        self.player_button[self.player_num + 1] = Button(self.window, text="Output", font=('', 12),
-                                                         command=lambda: self.output())
-        self.player_button[self.player_num + 1].grid(row=self.player_num + self.num_info_row, column=0, padx=5,
-                                                     pady=(1, 10),
-                                                     sticky='W',
-                                                     ipadx=self.default_padx, ipady=5)
+        self.player_button[self.player_num] = Button(self.window, text="Output", font=('', 12),
+                                                     command=lambda: self.output())
+        self.player_button[self.player_num].grid(row=self.player_num + self.num_info_row, column=0, padx=5,
+                                                 pady=(1, 10),
+                                                 sticky='W',
+                                                 ipadx=self.default_padx, ipady=5)
+        self.first_input_output = True
 
     def add_player_creation(self, num):
         # Selection button 0
@@ -121,8 +159,11 @@ class add_lineup:
         # TODO Check array size
 
         # Makes the default array before checking view
-        self.player_array = self.default_array.copy()
+        if not self.first_output:
+            self.player_array = self.default_array.copy()
+            self.forget_output_buttons()
 
+        # Get the array of player inputs
         for e in range(self.player_num):
             if self.player_input[e].get() != "":
                 self.player_array[e] = self.player_input[e].get()
@@ -134,28 +175,52 @@ class add_lineup:
         self.add_output_button(3, 1)
         self.add_output_button(4, 1)
         self.add_output_button(5, 1)
-        if len(self.player_array) > 5:
-            other_player_label = Label(self.window, text="Subs:", font=('', 12))
-            other_player_label.grid(row=self.num_info_row, column=2, columnspan=1, padx=self.default_padx, pady=(5, 20),
-                                    sticky='W')
+
+        # If there are more than 6 people
+        if len(self.player_array) > 6:
+            self.other_player_label = Label(self.window, text="Subs:", font=('', 12))
+            self.other_player_label.grid(row=self.num_info_row, column=2, columnspan=1, padx=self.default_padx,
+                                         pady=(5, 20),
+                                         sticky='W')
         for b in range(len(self.player_array) - 6):
             self.player_labels[b + 6] = Label(self.window, text=self.player_array[b + 6], font=('', 12))
             self.player_labels[b + 6].grid(row=self.num_info_row, column=b + 3, columnspan=1, padx=self.default_padx,
                                            pady=(5, 20),
                                            sticky='W')
-        rotate_button = Button(self.window, text="Rotate ", font=('', 12),
-                               command=lambda: self.rotate())
-        rotate_button.grid(row=self.num_info_row + 5, column=2, padx=5, pady=(1, 10), sticky='W',
-                           ipadx=self.default_padx,
-                           ipady=5)
+
+        if self.labels:
+            bottom_labels_row = self.num_info_row + 4
+        else:
+            bottom_labels_row = self.num_info_row + 2
+
+        # Label for the net
+        self.net_label = Label(self.window, text="          NET         ", font=('', 15), fg="blue4", bg="gray80")
+        self.net_label.grid(row=bottom_labels_row + 1, column=2, columnspan=3, padx=self.default_padx, pady=(5, 20),
+                            sticky='s')
+        # Make the rotate button
+        self.rotate_button = Button(self.window, text="Rotate ", font=('', 12),
+                                    command=lambda: self.rotate())
+        self.rotate_button.grid(row=bottom_labels_row + 2, column=2, padx=5, pady=(1, 10), sticky='W',
+                                ipadx=self.default_padx, ipady=5, columnspan=3)
+        # As it has now output the first output is now true
+        self.first_output = False
+
+    def forget_output_buttons(self):
+        if not self.first_output:
+            if not self.other_player_label is None:
+                self.other_player_label.grid_forget()
+            if not self.net_label is None:
+                self.net_label.grid_forget()
+            self.rotate_button.grid_forget()
+            # Forget all the label objects
+            for f in range(len(self.player_labels)):
+                self.player_labels[f].grid_forget()
+            # Forget all the position labels if they exist
+            if self.position_array_labels[0] != 0:
+                for g in range(len(self.position_array_labels)):
+                    self.position_array_labels[g].grid_forget()
 
     def add_output_button(self, num, row):
-
-        # Forget last output
-        if self.position_array_labels[num] != 0:
-            self.position_array_labels[num].grid_forget()
-        if self.player_labels[num] != 0:
-            self.player_labels[num].grid_forget()
 
         # If there are labels it takes the row down by one
         if self.labels and row == 1:
@@ -171,11 +236,10 @@ class add_lineup:
         else:
             column = num + 2
 
-        print("num", num, "row", row, "column", column)
-        self.player_labels[num] = Label(self.window, text=self.player_array[num], font=('', 12))
+        self.player_labels[num] = Label(self.window, text=self.player_array[num], font=('', 14))
         self.player_labels[num].grid(row=row + self.num_info_row + 1, column=column, columnspan=1,
                                      padx=self.default_padx, pady=(5, 20),
-                                     sticky='W')
+                                     sticky='s')
         if self.labels:
             self.position_array_labels[num] = Label(self.window, text=self.position_array[num], font=('', 12))
             self.position_array_labels[num].grid(row=row + 2 + self.num_info_row, column=column, columnspan=1,

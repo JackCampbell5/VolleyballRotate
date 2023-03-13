@@ -11,6 +11,5 @@
 + Add more colors
 + Print to file and get players from file?
 + Add documentation
-+ Remove print statements
++ Have people be able to rotate in from both sides
 + Update Read Me
-+ When buttons are clicks remove all objects and re do

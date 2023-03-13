@@ -7,7 +7,7 @@ class add_lineup:
 
         # Final values of the program
         self.default_padx = 10
-        self.position_array = ["Server", "Hitter", "Hitter", "Setter", "Setter", "Setter"]
+        self.position_array = ["Server", "Hitter", "Setter", "Hitter", "Hitter", "Hitter"]
 
         # The window
         self.window = Tk()
@@ -256,3 +256,7 @@ class add_lineup:
     def run(self):
         # Says our method is ready to run
         self.window.mainloop()
+
+
+# Line that actually runs the class
+lineup = add_lineup()

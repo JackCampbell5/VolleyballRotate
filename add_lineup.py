@@ -14,13 +14,15 @@ class add_lineup:
 
         # The checkbox for if you want labels
         self.labels = False
+        self.two_subs = False
         self.checkbox_output = None
+        self.checkbox_output_subs = None
         self.labels_input = [None for x in range(2)]
 
         # Player number
         self.player_num = -1
         self.player_number_change_entry = [None for x in range(3)]
-        self.num_info_row = 4
+        self.num_info_row = 5
 
         # The arrays containing the players
         self.first_input_output = False
@@ -46,6 +48,7 @@ class add_lineup:
 
         # Creates the labels input
         self.player_labels_checkbox()
+        self.both_sides_subs()
 
         # TODO Remove- Just for testing
         # self.create_player_inputs()
@@ -56,7 +59,7 @@ class add_lineup:
 
     def create_screen(self):
         # Sets the resolution of the window
-        self.window.geometry('1000x600')
+        self.window.geometry('1200x700')
 
         # Set Title of window
         self.window.title("Lineup Program")
@@ -86,14 +89,30 @@ class add_lineup:
         self.labels_input[0].grid(row=3, column=0, padx=self.default_padx, pady=(5, 20),
                                   sticky='W')
         self.labels_input[1] = Checkbutton(self.window, variable=self.checkbox_output,
-                                           command=lambda: self.checkbox_to_int(self.checkbox_output.get()))
+                                           command=lambda: self.checkbox_to_int(self.checkbox_output.get(),
+                                                                                "labels"))
         self.labels_input[1].grid(row=3, column=1, padx=self.default_padx, pady=(20, 1), sticky='W')
 
-    def checkbox_to_int(self, num):
+    def both_sides_subs(self):
+        self.checkbox_output_subs = IntVar()
+        self.labels_input[0] = Label(self.window, text="Sub in both sides?", font=('', 12))
+        self.labels_input[0].grid(row=4, column=0, padx=self.default_padx, pady=(5, 20),
+                                  sticky='W')
+        self.labels_input[1] = Checkbutton(self.window, variable=self.checkbox_output_subs,
+                                           command=lambda: self.checkbox_to_int(self.checkbox_output_subs.get(), "two_subs"))
+        self.labels_input[1].grid(row=4, column=1, padx=self.default_padx, pady=(20, 1), sticky='W')
+
+    def checkbox_to_int(self, num, what_to_change):
         if num:
-            self.labels = True
+            result = True
         else:
-            self.labels = False
+            result = False
+
+        if what_to_change == "labels":
+            self.labels = result
+            print(self.labels)
+        elif what_to_change == "two_subs":
+            self.two_subs = result
 
     def create_player_inputs(self):
 
@@ -182,11 +201,13 @@ class add_lineup:
             self.other_player_label.grid(row=self.num_info_row, column=2, columnspan=1, padx=self.default_padx,
                                          pady=(5, 20),
                                          sticky='W')
-        for b in range(len(self.player_array) - 6):
-            self.player_labels[b + 6] = Label(self.window, text=self.player_array[b + 6], font=('', 12))
-            self.player_labels[b + 6].grid(row=self.num_info_row, column=b + 3, columnspan=1, padx=self.default_padx,
-                                           pady=(5, 20),
-                                           sticky='W')
+            size = len(self.player_array) - 6
+            for b in range(len(self.player_array) - 6):
+                self.player_labels[b + 6] = Label(self.window, text=self.player_array[b + 6], font=('', 12))
+                self.player_labels[b + 6].grid(row=size - b + self.num_info_row, column=2, columnspan=1,
+                                               padx=self.default_padx,
+                                               pady=(5, 20),
+                                               sticky='W')
 
         if self.labels:
             bottom_labels_row = self.num_info_row + 4
@@ -195,12 +216,12 @@ class add_lineup:
 
         # Label for the net
         self.net_label = Label(self.window, text="          NET         ", font=('', 15), fg="blue4", bg="gray80")
-        self.net_label.grid(row=bottom_labels_row + 1, column=2, columnspan=3, padx=self.default_padx, pady=(5, 20),
+        self.net_label.grid(row=bottom_labels_row + 1, column=3, columnspan=3, padx=self.default_padx, pady=(5, 20),
                             sticky='s')
         # Make the rotate button
         self.rotate_button = Button(self.window, text="Rotate ", font=('', 12),
                                     command=lambda: self.rotate())
-        self.rotate_button.grid(row=bottom_labels_row + 2, column=2, padx=5, pady=(1, 10), sticky='W',
+        self.rotate_button.grid(row=bottom_labels_row + 2, column=3, padx=10, pady=(10, 10), sticky='W',
                                 ipadx=self.default_padx, ipady=5, columnspan=3)
         # As it has now output the first output is now true
         self.first_output = False
@@ -228,13 +249,13 @@ class add_lineup:
 
         # Sets the column of the second row based on the number
         if num == 3:
-            column = 4
+            column = 5
         elif num == 4:
-            column = 3
+            column = 4
         elif num == 5:
-            column = 2
+            column = 3
         else:
-            column = num + 2
+            column = num + 3
 
         self.player_labels[num] = Label(self.window, text=self.player_array[num], font=('', 14))
         self.player_labels[num].grid(row=row + self.num_info_row + 1, column=column, columnspan=1,

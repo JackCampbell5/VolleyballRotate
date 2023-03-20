@@ -11,5 +11,5 @@
 + Add more colors
 + Print to file and get players from file?
 + Add documentation
-+ Have people be able to rotate in from both sides
-+ Update Read Me
++ Update Read Me 
++ Move players up and down in the lineup

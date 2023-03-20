@@ -1,4 +1,6 @@
+import math
 from tkinter import *
+from tkinter import filedialog
 
 
 class add_lineup:
@@ -18,11 +20,13 @@ class add_lineup:
         self.checkbox_output = None
         self.checkbox_output_subs = None
         self.labels_input = [None for x in range(2)]
+        self.import_file = [None for x in range(2)]
 
         # Player number
         self.player_num = -1
         self.player_number_change_entry = [None for x in range(3)]
         self.num_info_row = 5
+        self.two_column = 0
 
         # The arrays containing the players
         self.first_input_output = False
@@ -35,6 +39,7 @@ class add_lineup:
 
         # Output values
         self.net_label = None
+        self.other_player_label_two = None
         self.other_player_label = None
         self.rotate_button = None
         self.output_value = None
@@ -81,7 +86,7 @@ class add_lineup:
         self.player_number_change_entry[2] = Button(self.window, text="Start", font=('', 12),
                                                     command=lambda: self.create_player_inputs())
         self.player_number_change_entry[2].grid(row=2, column=2, padx=5, pady=(1, 10), sticky='W',
-                                                ipadx=self.default_padx, ipady=5, columnspan=3)
+                                                ipadx=self.default_padx, ipady=5)
 
     def player_labels_checkbox(self):
         self.checkbox_output = IntVar()
@@ -99,7 +104,8 @@ class add_lineup:
         self.labels_input[0].grid(row=4, column=0, padx=self.default_padx, pady=(5, 20),
                                   sticky='W')
         self.labels_input[1] = Checkbutton(self.window, variable=self.checkbox_output_subs,
-                                           command=lambda: self.checkbox_to_int(self.checkbox_output_subs.get(), "two_subs"))
+                                           command=lambda: self.checkbox_to_int(self.checkbox_output_subs.get(),
+                                                                                "two_subs"))
         self.labels_input[1].grid(row=4, column=1, padx=self.default_padx, pady=(20, 1), sticky='W')
 
     def checkbox_to_int(self, num, what_to_change):
@@ -133,6 +139,11 @@ class add_lineup:
             self.player_num = 6
             # TODO print out error if this occurs
 
+        if self.player_num > 8:
+            self.two_column = 2
+        else:
+            self.two_column = 0
+
         if self.player_num < 6: self.player_num = 6
         # The default array of values [1-Playernum]
         self.default_array = [x + 1 for x in range(self.player_num)]
@@ -165,14 +176,20 @@ class add_lineup:
         self.first_input_output = True
 
     def add_player_creation(self, num):
+        if self.two_column == 2 and num > 7:
+            column = 2
+            row = num - 8
+        else:
+            column = 0
+            row = num
         # Selection button 0
         self.player_button[num] = Label(self.window, text="Player # " + str(num + 1), font=('', 12))
-        self.player_button[num].grid(row=num + self.num_info_row, column=0, padx=5, pady=(1, 10), sticky='W',
+        self.player_button[num].grid(row=row + self.num_info_row, column=column, padx=5, pady=(1, 10), sticky='W',
                                      ipadx=self.default_padx,
                                      ipady=5)
         # Selection input 0
         self.player_input[num] = Entry(self.window, font=('', 10))
-        self.player_input[num].grid(row=num + self.num_info_row, column=1, padx=self.default_padx, sticky='W')
+        self.player_input[num].grid(row=row + self.num_info_row, column=column + 1, padx=self.default_padx, sticky='W')
 
     def output(self):
         # TODO Check array size
@@ -187,28 +204,67 @@ class add_lineup:
             if self.player_input[e].get() != "":
                 self.player_array[e] = self.player_input[e].get()
 
-        # Into Label and directors
-        self.add_output_button(0, 0)
-        self.add_output_button(1, 0)
-        self.add_output_button(2, 0)
-        self.add_output_button(3, 1)
-        self.add_output_button(4, 1)
-        self.add_output_button(5, 1)
-
         # If there are more than 6 people
         if len(self.player_array) > 6:
-            self.other_player_label = Label(self.window, text="Subs:", font=('', 12))
-            self.other_player_label.grid(row=self.num_info_row, column=2, columnspan=1, padx=self.default_padx,
+
+            if self.two_subs:
+                above = math.floor((self.player_num - 6) / 2) + 6
+                # Into Label and directors
+                self.add_output_button(0, 0)
+                self.add_output_button(1, 0)
+                self.add_output_button(2, 0)
+                self.add_output_button(above - 3, 1, above)
+                self.add_output_button(above - 2, 1, above)
+                self.add_output_button(above - 1, 1, above)
+            else:
+                above = 6
+                # Into Label and directors
+                self.add_output_button(0, 0)
+                self.add_output_button(1, 0)
+                self.add_output_button(2, 0)
+                self.add_output_button(3, 1)
+                self.add_output_button(4, 1)
+                self.add_output_button(5, 1)
+
+            self.other_player_label = Label(self.window, text="Subs:", font=('', 12), fg="Red")
+            self.other_player_label.grid(row=self.num_info_row, column=2 + self.two_column, columnspan=1,
+                                         padx=self.default_padx,
                                          pady=(5, 20),
                                          sticky='W')
-            size = len(self.player_array) - 6
-            for b in range(len(self.player_array) - 6):
-                self.player_labels[b + 6] = Label(self.window, text=self.player_array[b + 6], font=('', 12))
-                self.player_labels[b + 6].grid(row=size - b + self.num_info_row, column=2, columnspan=1,
+            if self.two_subs:
+                self.other_player_label_two = Label(self.window, text="Subs:", font=('', 12), fg="Red")
+                self.other_player_label_two.grid(row=self.num_info_row, column=6 + self.two_column, columnspan=1,
+                                                 padx=self.default_padx,
+                                                 pady=(5, 20),
+                                                 sticky='W')
+            size = above - 6
+            for b in range(len(self.player_array) - above):
+                if self.two_subs:
+                    row = above-6
+                else:
+                    row = 6
+                self.player_labels[b + above] = Label(self.window, text=self.player_array[b + above], font=('', 12),
+                                                      fg="Red")
+                self.player_labels[b + above].grid(row=row- b + self.num_info_row, column=2 + self.two_column,
+                                                   columnspan=1,
+                                                   padx=self.default_padx,
+                                                   pady=(5, 20),
+                                                   sticky='W')
+            for b in range(size):
+                self.player_labels[b + 3] = Label(self.window, text=self.player_array[b + 3], font=('', 12), fg="Red")
+                self.player_labels[b + 3].grid(row=size - b + self.num_info_row, column=6 + self.two_column,
+                                               columnspan=1,
                                                padx=self.default_padx,
                                                pady=(5, 20),
                                                sticky='W')
-
+        else:
+            # Into Label and directors
+            self.add_output_button(0, 0)
+            self.add_output_button(1, 0)
+            self.add_output_button(2, 0)
+            self.add_output_button(3, 1)
+            self.add_output_button(4, 1)
+            self.add_output_button(5, 1)
         if self.labels:
             bottom_labels_row = self.num_info_row + 4
         else:
@@ -216,12 +272,14 @@ class add_lineup:
 
         # Label for the net
         self.net_label = Label(self.window, text="          NET         ", font=('', 15), fg="blue4", bg="gray80")
-        self.net_label.grid(row=bottom_labels_row + 1, column=3, columnspan=3, padx=self.default_padx, pady=(5, 20),
+        self.net_label.grid(row=bottom_labels_row + 1, column=3 + self.two_column, columnspan=3, padx=self.default_padx,
+                            pady=(5, 20),
                             sticky='s')
         # Make the rotate button
         self.rotate_button = Button(self.window, text="Rotate ", font=('', 12),
                                     command=lambda: self.rotate())
-        self.rotate_button.grid(row=bottom_labels_row + 2, column=3, padx=10, pady=(10, 10), sticky='W',
+        self.rotate_button.grid(row=bottom_labels_row + 2, column=3 + self.two_column, padx=10, pady=(10, 10),
+                                sticky='W',
                                 ipadx=self.default_padx, ipady=5, columnspan=3)
         # As it has now output the first output is now true
         self.first_output = False
@@ -230,6 +288,8 @@ class add_lineup:
         if not self.first_output:
             if not self.other_player_label is None:
                 self.other_player_label.grid_forget()
+            if not self.other_player_label_two is None:
+                self.other_player_label_two.grid_forget()
             if not self.net_label is None:
                 self.net_label.grid_forget()
             self.rotate_button.grid_forget()
@@ -241,29 +301,41 @@ class add_lineup:
                 for g in range(len(self.position_array_labels)):
                     self.position_array_labels[g].grid_forget()
 
-    def add_output_button(self, num, row):
+    def add_output_button(self, num, row, above_num=0):
 
         # If there are labels it takes the row down by one
         if self.labels and row == 1:
             row = 2
 
-        # Sets the column of the second row based on the number
-        if num == 3:
-            column = 5
-        elif num == 4:
-            column = 4
-        elif num == 5:
-            column = 3
+        if self.two_subs:
+            # Sets the column of the second row based on the number
+            if num == above_num - 3:
+                column = 5
+            elif num == above_num - 2:
+                column = 4
+            elif num == above_num - 1:
+                column = 3
+            else:
+                column = num + 3
         else:
-            column = num + 3
+            # Sets the column of the second row based on the number
+            if num == 3:
+                column = 5
+            elif num == 4:
+                column = 4
+            elif num == 5:
+                column = 3
+            else:
+                column = num + 3
+        print(num)
+        print(column)
 
         self.player_labels[num] = Label(self.window, text=self.player_array[num], font=('', 14))
-        self.player_labels[num].grid(row=row + self.num_info_row + 1, column=column, columnspan=1,
-                                     padx=self.default_padx, pady=(5, 20),
-                                     sticky='s')
+        self.player_labels[num].grid(row=row + self.num_info_row + 1, column=column + self.two_column,
+                                     padx=self.default_padx, pady=(5, 20), sticky='s')
         if self.labels:
             self.position_array_labels[num] = Label(self.window, text=self.position_array[num], font=('', 12))
-            self.position_array_labels[num].grid(row=row + 2 + self.num_info_row, column=column, columnspan=1,
+            self.position_array_labels[num].grid(row=row + 2 + self.num_info_row, column=column + self.two_column,
                                                  padx=self.default_padx,
                                                  pady=(5, 20), sticky='W')
 

@@ -19,7 +19,8 @@ class add_lineup:
         self.two_subs = False
         self.checkbox_output = None
         self.checkbox_output_subs = None
-        self.labels_input = [None for x in range(2)]
+        self.labels_input = [None for x in range(3)]
+        self.both_subs = [None for x in range(3)]
         self.import_file = [None for x in range(2)]
 
         # Player number
@@ -91,22 +92,26 @@ class add_lineup:
     def player_labels_checkbox(self):
         self.checkbox_output = IntVar()
         self.labels_input[0] = Label(self.window, text="Position Labels?", font=('', 12))
-        self.labels_input[0].grid(row=3, column=0, padx=self.default_padx, pady=(5, 20),
+        self.labels_input[0].grid(row=3, column=0, padx=self.default_padx, pady=(10, 10),
                                   sticky='W')
         self.labels_input[1] = Checkbutton(self.window, variable=self.checkbox_output,
                                            command=lambda: self.checkbox_to_int(self.checkbox_output.get(),
                                                                                 "labels"))
-        self.labels_input[1].grid(row=3, column=1, padx=self.default_padx, pady=(20, 1), sticky='W')
+        self.labels_input[1].grid(row=3, column=1, padx=self.default_padx, pady=(10, 10), sticky='W')
+        self.labels_input[2] = Label(self.window, text="* Label the positions \n of the players", font=('', 10))
+        self.labels_input[2].grid(row=3, column=2, padx=self.default_padx, pady=(10, 10), sticky='W', columnspan=4)
 
     def both_sides_subs(self):
         self.checkbox_output_subs = IntVar()
-        self.labels_input[0] = Label(self.window, text="Sub in both sides?", font=('', 12))
-        self.labels_input[0].grid(row=4, column=0, padx=self.default_padx, pady=(5, 20),
+        self.both_subs[0] = Label(self.window, text="Sub in both sides?", font=('', 12))
+        self.both_subs[0].grid(row=4, column=0, padx=self.default_padx, pady=(10, 10),
                                   sticky='W')
-        self.labels_input[1] = Checkbutton(self.window, variable=self.checkbox_output_subs,
+        self.both_subs[1] = Checkbutton(self.window, variable=self.checkbox_output_subs,
                                            command=lambda: self.checkbox_to_int(self.checkbox_output_subs.get(),
                                                                                 "two_subs"))
-        self.labels_input[1].grid(row=4, column=1, padx=self.default_padx, pady=(20, 1), sticky='W')
+        self.both_subs[1].grid(row=4, column=1, padx=self.default_padx, pady=(10, 10), sticky='W')
+        self.both_subs[2] = Label(self.window, text="* The players sub in \n from both sides", font=('', 10))
+        self.both_subs[2].grid(row=4, column=2, padx=self.default_padx, pady=(10, 10), sticky='W', columnspan=4)
 
     def checkbox_to_int(self, num, what_to_change):
         if num:
@@ -116,7 +121,6 @@ class add_lineup:
 
         if what_to_change == "labels":
             self.labels = result
-            print(self.labels)
         elif what_to_change == "two_subs":
             self.two_subs = result
 
@@ -183,7 +187,7 @@ class add_lineup:
             column = 0
             row = num
         # Selection button 0
-        self.player_button[num] = Label(self.window, text="Player # " + str(num + 1), font=('', 12))
+        self.player_button[num] = Label(self.window, text="Player # " + str(num + 1), font=('', 12), fg="Purple")
         self.player_button[num].grid(row=row + self.num_info_row, column=column, padx=5, pady=(1, 10), sticky='W',
                                      ipadx=self.default_padx,
                                      ipady=5)
@@ -239,13 +243,9 @@ class add_lineup:
                                                  sticky='W')
             size = above - 6
             for b in range(len(self.player_array) - above):
-                if self.two_subs:
-                    row = above-6
-                else:
-                    row = 6
                 self.player_labels[b + above] = Label(self.window, text=self.player_array[b + above], font=('', 12),
                                                       fg="Red")
-                self.player_labels[b + above].grid(row=row- b + self.num_info_row, column=2 + self.two_column,
+                self.player_labels[b + above].grid(row=6 + b, column=2 + self.two_column,
                                                    columnspan=1,
                                                    padx=self.default_padx,
                                                    pady=(5, 20),
@@ -311,14 +311,19 @@ class add_lineup:
             # Sets the column of the second row based on the number
             if num == above_num - 3:
                 column = 5
+                label = 3
             elif num == above_num - 2:
                 column = 4
+                label = 4
             elif num == above_num - 1:
                 column = 3
+                label = 5
             else:
                 column = num + 3
+                label = num
         else:
             # Sets the column of the second row based on the number
+            label = num
             if num == 3:
                 column = 5
             elif num == 4:
@@ -327,15 +332,13 @@ class add_lineup:
                 column = 3
             else:
                 column = num + 3
-        print(num)
-        print(column)
 
         self.player_labels[num] = Label(self.window, text=self.player_array[num], font=('', 14))
         self.player_labels[num].grid(row=row + self.num_info_row + 1, column=column + self.two_column,
                                      padx=self.default_padx, pady=(5, 20), sticky='s')
         if self.labels:
-            self.position_array_labels[num] = Label(self.window, text=self.position_array[num], font=('', 12))
-            self.position_array_labels[num].grid(row=row + 2 + self.num_info_row, column=column + self.two_column,
+            self.position_array_labels[label] = Label(self.window, text=self.position_array[label], font=('', 12))
+            self.position_array_labels[label].grid(row=row + 2 + self.num_info_row, column=column + self.two_column,
                                                  padx=self.default_padx,
                                                  pady=(5, 20), sticky='W')
 

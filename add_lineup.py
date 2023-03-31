@@ -242,17 +242,20 @@ class add_lineup:
                                                  pady=(5, 20),
                                                  sticky='W')
             size = above - 6
+            print(size)
             for b in range(len(self.player_array) - above):
                 self.player_labels[b + above] = Label(self.window, text=self.player_array[b + above], font=('', 12),
                                                       fg="Red")
-                self.player_labels[b + above].grid(row=6 + b, column=2 + self.two_column,
+                row = self.player_num-above-b+6-1
+                self.player_labels[b + above].grid(row=row, column=2 + self.two_column,
                                                    columnspan=1,
                                                    padx=self.default_padx,
                                                    pady=(5, 20),
                                                    sticky='W')
             for b in range(size):
                 self.player_labels[b + 3] = Label(self.window, text=self.player_array[b + 3], font=('', 12), fg="Red")
-                self.player_labels[b + 3].grid(row=size - b + self.num_info_row, column=6 + self.two_column,
+                row = self.num_info_row+b+1
+                self.player_labels[b + 3].grid(row=row, column=6 + self.two_column,
                                                columnspan=1,
                                                padx=self.default_padx,
                                                pady=(5, 20),
